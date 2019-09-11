@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.misc import imresize
+#from scipy.misc import imresize
 
 
 def arr_resize(arr, size):
