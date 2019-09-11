@@ -13,12 +13,12 @@ import numpy as np
 
 from model.SEResNeXt import SEResNeXt
 from utils.img_util import arr_resize
-import os
+# import os
 import json
-import configparser
+# import configparser
 
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = '1'
+# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+# os.environ["CUDA_VISIBLE_DEVICES"] = '1'
 
 def normalize(im):
     im[:, :, 0] = (im[:, :, 0] - 103.94)
