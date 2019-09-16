@@ -91,9 +91,8 @@ def lr_scheduler(epoch):
         K.set_value(model.optimizer.lr, K.eval(model.optimizer.lr) * 0.1)
     return K.eval(model.optimizer.lr)
 change_lr = LearningRateScheduler(lr_scheduler)
-
 model.compile(
-    optimizer= hvd.DistributedOptimizer(opt)
+    optimizer= hvd.DistributedOptimizer(sgd)
     , loss='categorical_crossentropy'
     , metrics=['accuracy'])
 
