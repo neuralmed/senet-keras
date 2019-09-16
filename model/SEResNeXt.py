@@ -156,12 +156,15 @@ class SEResNeXt(object):
         Build a SENet model.
         '''
         x = self.initial_layer(inputs)
+        print(x.shape)
         
         x = self.residual_layer(x, out_dim=64)
         x = self.residual_layer(x, out_dim=128)
         x = self.residual_layer(x, out_dim=256)
         
         x = GlobalAveragePooling2D()(x)
+        print(x.shape)
         x = Dense(units=num_classes, activation='softmax')(x)
+        print(x.shape)
         
         return Model(inputs, x)

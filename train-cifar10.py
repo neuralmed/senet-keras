@@ -28,11 +28,14 @@ K.set_session(session)
 
 ## Data preparation
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+# print(x_train.shape)
 y_train = np_utils.to_categorical(y_train, num_classes)
 y_test = np_utils.to_categorical(y_test, num_classes)
 
 x_train = arr_resize(x_train, size)
 x_test = arr_resize(x_test, size)
+# print(x_train.shape)
+# print(x_test.shape)
 
 datagen = ImageDataGenerator(
     rescale = 1/255.
@@ -64,7 +67,7 @@ model.compile(
     , loss='categorical_crossentropy'
     , metrics=['accuracy'])
 
-
+model.summary()
 ## Set callbacks
 model_save_name = "./trained_model/SEResNeXt"
 filepath = model_save_name + "-{epoch:02d}-{val_acc:.3f}.h5"
