@@ -38,9 +38,9 @@ K.set_session(session)
 ## Data preparation
 
 train_data = pd.read_csv('./data/pneumothorax_overmask_train.csv')
-# train_data = train_data[0:100]
+#train_data = train_data[0:100]
 valid_data = pd.read_csv('./data/pneumothorax_overmask_val.csv')
-# valid_data = valid_data[0:100]
+#valid_data = valid_data[0:100]
 
 IMAGE_SIZE = 512
 classes_patologias = ['No Pneumothorax', 'Pneumothorax']
@@ -49,7 +49,7 @@ x_train = np.array(
     [normalize(img_to_array(load_img('../hdd/pneumodata/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
      for image_name in train_data['contours_files'].values])
 
-x_train = arr_resize(x_train, IMAGE_SIZE)
+#x_train = arr_resize(x_train, IMAGE_SIZE)
 
 y_train = train_data[classes_patologias]
 
@@ -57,7 +57,7 @@ x_test = np.array(
     [normalize(img_to_array(load_img('../hdd/pneumodata/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
      for image_name in valid_data['contours_files'].values])
 
-x_test = arr_resize(x_test, IMAGE_SIZE)
+#x_test = arr_resize(x_test, IMAGE_SIZE)
 
 y_test = valid_data[classes_patologias]
 
