@@ -4,7 +4,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import optimizers
 from keras.callbacks import LearningRateScheduler, CSVLogger, ModelCheckpoint
 from keras.preprocessing.image import load_img, img_to_array
-
+import horovod.tensorflow as hvd
 import keras.backend as K
 from keras.backend import tensorflow_backend
 import tensorflow as tf
@@ -93,7 +93,7 @@ def lr_scheduler(epoch):
 change_lr = LearningRateScheduler(lr_scheduler)
 
 model.compile(
-    optimizer=sgd
+    optimizer= hvd.DistributedOptimizer(opt)
     , loss='categorical_crossentropy'
     , metrics=['accuracy'])
 
