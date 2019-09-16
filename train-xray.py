@@ -13,12 +13,12 @@ import numpy as np
 
 from model.SEResNeXt import SEResNeXt
 from utils.img_util import arr_resize
-# import os
+import os
 import json
 # import configparser
 
-# os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-# os.environ["CUDA_VISIBLE_DEVICES"] = '1'
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = '0,1,2,3'
 
 def normalize(im):
     im[:, :, 0] = (im[:, :, 0] - 103.94)
@@ -31,22 +31,22 @@ num_classes = 2
 batch_size = 16
 
 ## Memory setting
-# config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
-# session = tf.Session(config=config)
-# K.set_session(session)
+config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
+session = tf.Session(config=config)
+K.set_session(session)
 
 ## Data preparation
 
 train_data = pd.read_csv('./data/pneumothorax_overmask_train.csv')
-#train_data = train_data[0:100]
+train_data = train_data[0:100]
 valid_data = pd.read_csv('./data/pneumothorax_overmask_val.csv')
-#valid_data = valid_data[0:100]
+valid_data = valid_data[0:100]
 
 IMAGE_SIZE = 512
 classes_patologias = ['No Pneumothorax', 'Pneumothorax']
 
 x_train = np.array(
-    [normalize(img_to_array(load_img('/hdd/pneumodata/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
+    [normalize(img_to_array(load_img('/home/ubuntu/disk2/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
      for image_name in train_data['contours_files'].values])
 
 #x_train = arr_resize(x_train, IMAGE_SIZE)
@@ -54,7 +54,7 @@ x_train = np.array(
 y_train = train_data[classes_patologias]
 
 x_test = np.array(
-    [normalize(img_to_array(load_img('/hdd/pneumodata/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
+    [normalize(img_to_array(load_img('/home/ubuntu/disk2/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
      for image_name in valid_data['contours_files'].values])
 
 #x_test = arr_resize(x_test, IMAGE_SIZE)
