@@ -94,7 +94,7 @@ def lr_scheduler(epoch):
     return K.eval(model.optimizer.lr)
 change_lr = LearningRateScheduler(lr_scheduler)
 opt = tf.train.MomentumOptimizer(
-            learning_rate=0.1, momentum=0.9, use_nesterov=True)
+            lr=0.1, momentum=0.9, use_nesterov=True)
 model.compile(
     optimizer= hvd.DistributedOptimizer(opt)
     , loss='categorical_crossentropy'
