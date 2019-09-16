@@ -38,7 +38,7 @@ NUM_GPUS_MASTER=`nvidia-smi -L | wc -l`
 
 # p3 instances have larger GPU memory, so a higher batch size can be used
 GPU_MEM=`nvidia-smi --query-gpu=memory.total --format=csv,noheader -i 0 | awk '{print $1}'`
-if [ $GPU_MEM -gt 15000 ] ; then BATCH_SIZE=256; else BATCH_SIZE=128; fi
+if [ $GPU_MEM -gt 15000 ] ; then BATCH_SIZE=16; else BATCH_SIZE=4; fi
 
 # Training
 ~/anaconda3/envs/tensorflow_p36/bin/mpirun -np $gpus -hostfile ~/senet-keras/hosts -mca plm_rsh_no_tree_spawn 1 \
