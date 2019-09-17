@@ -30,7 +30,8 @@ class LearningRateScheduler(keras.callbacks.Callback):
     verbose: int. 0: quiet, 1: update messages.
     """
 def __init__(self, schedule, verbose=0):
-    super(LearningRateScheduler, self).__init__(schedule, verbose=0)
+    # super(LearningRateScheduler, self).__init__()
+    super().__init__()
     self.schedule = schedule
     self.verbose = verbose
 
