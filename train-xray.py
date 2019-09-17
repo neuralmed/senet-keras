@@ -120,7 +120,7 @@ valid_datagen = ImageDataGenerator(rescale = 1/255.)
 model = SEResNeXt(IMAGE_SIZE, num_classes).model
 learning_rate = 0.1
 momentum = 0.9
-opt = tf.compat.v1.train.MomentumOptimizer(
+opt = tf.train.MomentumOptimizer(
             learning_rate, momentum, use_nesterov=True)
 
 def lr_scheduler(epoch):
