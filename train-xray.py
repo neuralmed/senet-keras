@@ -29,10 +29,10 @@ class LearningRateScheduler(keras.callbacks.Callback):
     and returns a new learning rate as output (float).
     verbose: int. 0: quiet, 1: update messages.
     """
-def __init__(self, schedule, verbose=0):
-    super(LearningRateScheduler, self).__init__()
-    self.schedule = schedule
-    self.verbose = verbose
+    def __init__(self, schedule, verbose=0):
+        super(LearningRateScheduler, self).__init__()
+        self.schedule = schedule
+        self.verbose = verbose
 
     def on_epoch_begin(self, epoch, logs=None):
         if not hasattr(self.model.optimizer, 'learning_rate'):
