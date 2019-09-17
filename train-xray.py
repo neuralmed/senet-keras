@@ -3,7 +3,7 @@ from keras.utils import np_utils
 from keras.datasets import cifar10
 from keras.preprocessing.image import ImageDataGenerator
 import tensorflow as tf
-from tensorflow.keras.callbacks import LearningRateScheduler, CSVLogger, ModelCheckpoint
+from keras.callbacks import CSVLogger, ModelCheckpoint
 from keras.preprocessing.image import load_img, img_to_array
 import horovod.tensorflow as hvd
 import keras.backend as K
@@ -20,6 +20,39 @@ hvd.init()
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"] = '0,1,2,3'
+
+class LearningRateScheduler(keras.callbacks.Callback):
+    """Learning rate scheduler.
+    # Arguments
+    schedule: a function that takes an epoch index as input
+    (integer, indexed from 0) and current learning rate
+    and returns a new learning rate as output (float).
+    verbose: int. 0: quiet, 1: update messages.
+    """
+def __init__(self, schedule, verbose=0):
+    super(LearningRateScheduler, self).__init__()
+    self.schedule = schedule
+    self.verbose = verbose
+
+    def on_epoch_begin(self, epoch, logs=None):
+        if not hasattr(self.model.optimizer, 'learning_rate'):
+            raise ValueError('Optimizer must have a "learning_rate" attribute.')
+        learning_rate = float(K.get_value(self.model.optimizer.learning_rate))
+        try:  # new API
+            learning_rate = self.schedule(epoch, learning_rate)
+        except TypeError:  # old API for backward compatibility
+            learning_rate = self.schedule(epoch)
+        if not isinstance(learning_rate, (float, np.float32, np.float64)):
+            raise ValueError('The output of the "schedule" function '
+                             'should be float.')
+        K.set_value(self.model.optimizer.learning_rate, learning_rate)
+        if self.verbose > 0:
+            print('\nEpoch %05d: LearningRateScheduler setting learning '
+                  'rate to %s.' % (epoch + 1, learning_rate))
+
+    def on_epoch_end(self, epoch, logs=None):
+        logs = logs or {}
+        logs['lr'] = K.get_value(self.model.optimizer.learning_rate)
 
 def normalize(im):
     im[:, :, 0] = (im[:, :, 0] - 103.94)
@@ -92,10 +125,10 @@ opt = tf.compat.v1.train.MomentumOptimizer(
 
 def lr_scheduler(epoch):
     print(epoch)
-    print(model.optimizer.lr)
+    print(model.optimizer.learning_rate)
     if epoch % 30 == 0:
-        K.set_value(model.optimizer.lr, K.eval(model.optimizer.lr) * 0.1)
-    return K.eval(model.optimizer.lr)
+        K.set_value(model.optimizer.learning_rate, K.eval(model.optimizer.learning_rate) * 0.1)
+    return K.eval(model.optimizer.learning_rate)
 change_lr = LearningRateScheduler(lr_scheduler)
 model.compile(
     optimizer= hvd.DistributedOptimizer(opt)
