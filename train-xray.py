@@ -2,7 +2,6 @@ from keras.utils import np_utils
 from keras.datasets import cifar10
 import keras
 from keras.preprocessing.image import ImageDataGenerator
-from keras import optimizers
 from keras.callbacks import LearningRateScheduler, CSVLogger, ModelCheckpoint
 from keras.preprocessing.image import load_img, img_to_array
 import horovod.tensorflow as hvd
@@ -11,7 +10,6 @@ from keras.backend import tensorflow_backend
 import tensorflow as tf
 import pandas as pd
 import numpy as np
-
 from model.SEResNeXt import SEResNeXt
 from utils.img_util import arr_resize
 import os
@@ -120,15 +118,16 @@ valid_datagen = ImageDataGenerator(rescale = 1/255.)
 
 ## Create and compile a model
 model = SEResNeXt(IMAGE_SIZE, num_classes).model
-sgd = optimizers.SGD(lr=0.1, momentum=0.9, nesterov=True)
-
+sgd = tf.compat.v1.keras.optimizers.SGD(lr=0.1, momentum=0.9, nesterov=True)
+learning_rate = 0.1
+momentum = 0.9
+opt = tf.train.MomentumOptimizer(
+            learning_rate, momentum, use_nesterov=True)
 def lr_scheduler(epoch):
     if epoch % 30 == 0:
         K.set_value(model.optimizer.lr, K.eval(model.optimizer.lr) * 0.1)
     return K.eval(model.optimizer.lr)
 change_lr = LearningRateScheduler(lr_scheduler)
-opt = tf.train.MomentumOptimizer(
-            lr=0.1, momentum=0.9, use_nesterov=True)
 model.compile(
     optimizer= hvd.DistributedOptimizer(opt)
     , loss='categorical_crossentropy'
