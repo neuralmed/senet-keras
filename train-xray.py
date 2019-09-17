@@ -121,7 +121,7 @@ model = SEResNeXt(IMAGE_SIZE, num_classes).model
 learning_rate = 0.1
 momentum = 0.9
 opt = tf.train.MomentumOptimizer(
-            learning_rate, momentum, use_nesterov=True)
+            learning_rate=learning_rate, momentum=momentum, use_nesterov=True)
 
 def lr_scheduler(epoch):
     print(epoch)
