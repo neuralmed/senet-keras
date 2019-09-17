@@ -1,6 +1,6 @@
+import keras
 from keras.utils import np_utils
 from keras.datasets import cifar10
-import keras
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import LearningRateScheduler, CSVLogger, ModelCheckpoint
 from keras.preprocessing.image import load_img, img_to_array
@@ -53,6 +53,7 @@ class LearningRateScheduler(keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         logs = logs or {}
         logs['lr'] = K.get_value(self.model.optimizer.learning_rate)
+
 
 def normalize(im):
     im[:, :, 0] = (im[:, :, 0] - 103.94)
