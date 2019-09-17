@@ -124,9 +124,10 @@ learning_rate = 0.1
 momentum = 0.9
 opt = tf.train.MomentumOptimizer(
             learning_rate, momentum, use_nesterov=True)
+
 def lr_scheduler(epoch):
     if epoch % 30 == 0:
-        K.set_value(model.optimizer.lr, K.eval(model.optimizer.learning_rate) * 0.1)
+        K.set_value(model.optimizer.learning_rate, K.eval(model.optimizer.learning_rate) * 0.1)
     return K.eval(model.optimizer.learning_rate)
 change_lr = LearningRateScheduler(lr_scheduler)
 model.compile(
