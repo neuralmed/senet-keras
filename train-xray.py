@@ -35,6 +35,7 @@ class LearningRateScheduler(keras.callbacks.Callback):
         self.verbose = verbose
 
     def on_epoch_begin(self, epoch, logs=None):
+        print(self.model.optimizer)
         if not hasattr(self.model.optimizer, 'learning_rate'):
             raise ValueError('Optimizer must have a "learning_rate" attribute.')
         learning_rate = float(K.get_value(self.model.optimizer.learning_rate))
@@ -159,7 +160,7 @@ model.fit_generator(
     , epochs=100
     , validation_data = valid_datagen.flow(x_test, y_test)
     , validation_steps=len(x_test) // batch_size
-    , callbacks=[change_lr, csv_logger, checkpoint])
+    , callbacks=[ csv_logger, checkpoint])
 
 model.save_weights('{0}.h5'.format(model_save_name))
 model.save('{0}_archweights.h5'.format(model_save_name))
