@@ -163,7 +163,7 @@ checkpoint = ModelCheckpoint(
 with open("{0}.json".format(model_save_name), 'w') as f:
     json.dump(json.loads(model.to_json()), f) # model.to_json() is a STRING of json
 
-model.fit_generator(
+multi_model.fit_generator(
     datagen.flow(x_train, y_train, batch_size=batch_size)
     , steps_per_epoch=len(x_train) // batch_size
     , epochs=100
