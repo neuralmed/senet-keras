@@ -68,7 +68,8 @@ num_classes = 2
 batch_size = 16
 
 ## Memory setting
-config = tf.ConfigProto(gpu_options=tf.GPUOptions())
+# config = tf.ConfigProto(gpu_options=tf.GPUOptions())
+config = tf.ConfigProto(gpu_options=tf.GPUOptions(allow_growth=True))
 session = tf.Session(config=config)
 K.set_session(session)
 
