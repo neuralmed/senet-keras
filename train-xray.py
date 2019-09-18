@@ -135,7 +135,10 @@ def lr_scheduler(epoch):
     if epoch % 30 == 0:
         K.set_value(model.optimizer.learning_rate, K.eval(model.optimizer.learning_rate) * 0.1)
     return K.eval(model.optimizer.learning_rate)
+
+
 change_lr = LearningRateScheduler(lr_scheduler)
+
 multi_model.compile(
     # optimizer= hvd.DistributedOptimizer(opt)
     optimizer= sgd
@@ -166,7 +169,7 @@ model.fit_generator(
     , epochs=100
     , validation_data = valid_datagen.flow(x_test, y_test)
     , validation_steps=len(x_test) // batch_size
-    , callbacks=[ csv_logger, checkpoint])
+    , callbacks=[change_lr, csv_logger, checkpoint])
 
 model.save_weights('{0}.h5'.format(model_save_name))
 model.save('{0}_archweights.h5'.format(model_save_name))
