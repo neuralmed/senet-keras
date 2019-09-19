@@ -65,7 +65,7 @@ def normalize(im):
 
 ## Load parameters
 num_classes = 2
-batch_size = 16
+batch_size = 4
 
 ## Memory setting
 # config = tf.ConfigProto(gpu_options=tf.GPUOptions())
@@ -76,11 +76,11 @@ K.set_session(session)
 ## Data preparation
 
 train_data = pd.read_csv('./data/pneumothorax_overmask_train.csv')
-train_data = train_data[0:100]
+#train_data = train_data[0:100]
 valid_data = pd.read_csv('./data/pneumothorax_overmask_val.csv')
-valid_data = valid_data[0:100]
+#valid_data = valid_data[0:100]
 
-IMAGE_SIZE = 512
+IMAGE_SIZE = 256
 classes_patologias = ['No Pneumothorax', 'Pneumothorax']
 
 x_train = np.array(
@@ -153,7 +153,7 @@ filepath = model_save_name + "-{epoch:02d}-{val_acc:.3f}.h5"
 csv_logger = CSVLogger('./logs/training.log')
 checkpoint = ModelCheckpoint(
     filepath
-    , monitor='val_acc'
+    , monitor='val_accuracy'
     , verbose=5
     , save_best_only=True
     , mode='max'
