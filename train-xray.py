@@ -76,9 +76,9 @@ K.set_session(session)
 ## Data preparation
 
 train_data = pd.read_csv('./data/pneumothorax_overmask_train.csv')
-#train_data = train_data[0:100]
+#train_data = train_data[0:10]
 valid_data = pd.read_csv('./data/pneumothorax_overmask_val.csv')
-#valid_data = valid_data[0:100]
+#valid_data = valid_data[0:10]
 
 IMAGE_SIZE = 512
 classes_patologias = ['No Pneumothorax', 'Pneumothorax']
@@ -165,7 +165,7 @@ model.compile(
 
 ## Set callbacks
 model_save_name = "./trained_model/SEResNeXt"
-filepath = model_save_name + "-{epoch:02d}-{val_acc:.3f}.h5"
+filepath = model_save_name + "-{epoch:02d}-{val_accuracy:.3f}.h5"
 
 csv_logger = CSVLogger('./logs/training.log')
 checkpoint = ModelCheckpoint(
