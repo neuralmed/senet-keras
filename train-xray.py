@@ -65,7 +65,7 @@ def normalize(im):
 
 ## Load parameters
 num_classes = 2
-batch_size = 4
+batch_size = 16
 
 ## Memory setting
 # config = tf.ConfigProto(gpu_options=tf.GPUOptions())
@@ -80,24 +80,24 @@ train_data = pd.read_csv('./data/pneumothorax_overmask_train.csv')
 valid_data = pd.read_csv('./data/pneumothorax_overmask_val.csv')
 #valid_data = valid_data[0:100]
 
-IMAGE_SIZE = 256
+IMAGE_SIZE = 512
 classes_patologias = ['No Pneumothorax', 'Pneumothorax']
 
-x_train = np.array(
-    [normalize(img_to_array(load_img('/home/ubuntu/disk2/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
-     for image_name in train_data['contours_files'].values])
+# x_train = np.array(
+#     [normalize(img_to_array(load_img('/home/ubuntu/disk2/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
+#      for image_name in train_data['contours_files'].values])
 
 #x_train = arr_resize(x_train, IMAGE_SIZE)
 
-y_train = train_data[classes_patologias]
+# y_train = train_data[classes_patologias]
 
-x_test = np.array(
-    [normalize(img_to_array(load_img('/home/ubuntu/disk2/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
-     for image_name in valid_data['contours_files'].values])
+# x_test = np.array(
+#     [normalize(img_to_array(load_img('/home/ubuntu/disk2/contorno/' + image_name.split('/')[4], target_size=(IMAGE_SIZE, IMAGE_SIZE), color_mode='rgb')))
+#      for image_name in valid_data['contours_files'].values])
 
 #x_test = arr_resize(x_test, IMAGE_SIZE)
 
-y_test = valid_data[classes_patologias]
+# y_test = valid_data[classes_patologias]
 
 
 # y_train = np_utils.to_categorical(y_train, num_classes)
@@ -105,7 +105,7 @@ y_test = valid_data[classes_patologias]
 # y_test = np_utils.to_categorical(y_test, num_classes)
 
 
-datagen = ImageDataGenerator(
+train_datagen = ImageDataGenerator(
     rescale = 1/255.
     , shear_range = 0.1
     , zoom_range = 0.1
@@ -119,6 +119,23 @@ datagen = ImageDataGenerator(
 valid_datagen = ImageDataGenerator(rescale = 1/255.)
 # valid_datagen.fit(x_test)
 
+train_generator = train_datagen.flow_from_dataframe(
+        dataframe=train_data,
+        directory='/home/ubuntu/disk2/contorno',
+        x_col="img_name",
+        y_col=classes_patologias,
+        target_size=(IMAGE_SIZE, IMAGE_SIZE),
+        batch_size=batch_size,
+        class_mode='categorical')
+
+valid_generator = valid_datagen.flow_from_dataframe(
+        dataframe=valid_data,
+        directory='/home/ubuntu/disk2/contorno',
+        x_col="img_name",
+        y_col=classes_patologias,
+        target_size=(IMAGE_SIZE, IMAGE_SIZE),
+        batch_size=batch_size,
+        class_mode='categorical')
 
 ## Create and compile a model
 model = SEResNeXt(IMAGE_SIZE, num_classes).model
@@ -165,11 +182,11 @@ with open("{0}.json".format(model_save_name), 'w') as f:
     json.dump(json.loads(model.to_json()), f) # model.to_json() is a STRING of json
 
 model.fit_generator(
-    datagen.flow(x_train, y_train, batch_size=batch_size)
-    , steps_per_epoch=len(x_train) // batch_size
+    train_generator
+    , steps_per_epoch= 3527
     , epochs=100
-    , validation_data = valid_datagen.flow(x_test, y_test)
-    , validation_steps=len(x_test) // batch_size
+    , validation_data = valid_generator
+    , validation_steps= 800
     , callbacks=[change_lr, csv_logger, checkpoint])
 
 model.save_weights('{0}.h5'.format(model_save_name))
